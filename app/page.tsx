@@ -1,65 +1,171 @@
-import Image from "next/image";
+import Image from 'next/image'
+import Link from "next/link";
+
+const featured = [
+  { id: 1, name: 'Cuadro Acuarela Floral', price: 2500, emoji: '🌸', image: '/productos/cuadro-acuarela-floral.jpg', category: 'Cuadros' },
+  { id: 2, name: 'Maceta Pintada a Mano', price: 1800, emoji: '🪴', image: '/productos/maceta-pintada.jpg', category: 'Cerámica' },
+  { id: 3, name: 'Tote Bag Bordada', price: 2200, emoji: '👜', image: '/productos/tote-bag-bordada.jpg', category: 'Textiles' },
+  { id: 4, name: 'Porta Velas de Cerámica', price: 1500, emoji: '🕯️', image: '/productos/porta-velas.jpg', category: 'Cerámica' },
+]
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <>
+      {/* Hero */}
+      <section className="relative bg-linear-to-br from-zinc-950 via-zinc-900 to-zinc-950 text-white overflow-hidden">
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-10 left-10 w-64 h-64 rounded-full bg-zinc-700 blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-80 h-80 rounded-full bg-zinc-600 blur-3xl" />
+        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-28 text-center">
+          <span className="inline-block text-zinc-400 text-sm font-medium tracking-[0.3em] uppercase mb-4">
+            ✦ Hecho con amor ✦
+          </span>
+          <h1
+            className="text-4xl sm:text-5xl md:text-6xl font-bold leading-tight mb-6"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
+            Artesanías que cuentan<br />
+            <span className="text-zinc-300 italic">una historia</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-zinc-400 text-lg max-w-xl mx-auto mb-10">
+            Piezas únicas creadas a mano con materiales naturales y mucho amor.
+            Cada obra es irrepetible, igual que quien la recibe.
           </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/productos"
+              className="bg-white text-zinc-900 font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 transition-colors shadow-md"
+            >
+              Ver Productos
+            </Link>
+            <Link
+              href="/nosotros"
+              className="border border-zinc-600 hover:border-white text-zinc-300 hover:text-white font-semibold px-8 py-3.5 rounded-full transition-colors"
+            >
+              Nuestra Historia
+            </Link>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+      </section>
+
+      {/* Categorías */}
+      <section className="bg-zinc-50 py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2
+            className="text-2xl font-bold text-zinc-900 text-center mb-2"
+            style={{ fontFamily: 'Georgia, serif' }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Explorá nuestras categorías
+          </h2>
+          <p className="text-zinc-500 text-center text-sm mb-10">
+            Cada pieza es única e irrepetible
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              { label: 'Cuadros', emoji: '🎨', desc: 'Acuarelas, óleos y más' },
+              { label: 'Cerámica', emoji: '🏺', desc: 'Macetas, tazas, jarras' },
+              { label: 'Textiles', emoji: '🧵', desc: 'Bolsos, cojines bordados' },
+              { label: 'Decoración', emoji: '✨', desc: 'Marcos, velas, objetos' },
+            ].map(cat => (
+              <Link
+                key={cat.label}
+                href="/productos"
+                className="bg-white rounded-2xl p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-zinc-200 group"
+              >
+                <span className="text-4xl block mb-3">{cat.emoji}</span>
+                <h3 className="font-bold text-zinc-900 group-hover:text-zinc-600 transition-colors">
+                  {cat.label}
+                </h3>
+                <p className="text-zinc-500 text-xs mt-1">{cat.desc}</p>
+              </Link>
+            ))}
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* Productos destacados */}
+      <section className="py-16 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between mb-10">
+            <div>
+              <h2
+                className="text-2xl font-bold text-zinc-900"
+                style={{ fontFamily: 'Georgia, serif' }}
+              >
+                Productos destacados
+              </h2>
+              <p className="text-zinc-500 text-sm mt-1">Lo más amado por nuestros clientes</p>
+            </div>
+            <Link
+              href="/productos"
+              className="text-zinc-500 hover:text-zinc-900 text-sm font-medium transition-colors hidden sm:block"
+            >
+              Ver todo →
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {featured.map(product => (
+              <Link
+                key={product.id}
+                href="/productos"
+                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-zinc-100 group"
+              >
+                <div className="relative h-44 bg-zinc-100 overflow-hidden">
+                  {product.image ? (
+                    <Image
+                      src={product.image}
+                      alt={product.name}
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-6xl">
+                      {product.emoji}
+                    </div>
+                  )}
+                </div>
+                <div className="p-4">
+                  <span className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">
+                    {product.category}
+                  </span>
+                  <h3 className="font-semibold text-zinc-900 text-sm mt-1">{product.name}</h3>
+                  <p className="text-zinc-900 font-bold mt-2">
+                    ${product.price.toLocaleString('es-AR')}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div className="text-center mt-8 sm:hidden">
+            <Link href="/productos" className="text-zinc-500 hover:text-zinc-900 text-sm font-medium">
+              Ver todo →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Banner CTA */}
+      <section className="bg-zinc-900 text-white py-14">
+        <div className="max-w-3xl mx-auto px-4 text-center">
+          <h2
+            className="text-3xl font-bold mb-4"
+            style={{ fontFamily: 'Georgia, serif' }}
+          >
+            ¿Buscás un regalo especial?
+          </h2>
+          <p className="text-zinc-400 mb-8 text-base">
+            Cada pieza puede personalizarse. Hablanos y creamos algo único para vos.
+          </p>
+          <Link
+            href="/servicio-al-cliente"
+            className="inline-block bg-white text-zinc-900 font-semibold px-8 py-3.5 rounded-full hover:bg-zinc-100 transition-colors shadow-md"
+          >
+            Contactanos
+          </Link>
+        </div>
+      </section>
+    </>
   );
 }
