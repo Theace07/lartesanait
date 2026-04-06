@@ -2,10 +2,11 @@ import Image from 'next/image'
 import Link from "next/link";
 
 const featured = [
-  { id: 1, name: 'Cuadro Acuarela Floral', price: 2500, emoji: '🌸', image: '/productos/cuadro-acuarela-floral.jpg', category: 'Cuadros' },
-  { id: 2, name: 'Maceta Pintada a Mano', price: 1800, emoji: '🪴', image: '/productos/maceta-pintada.jpg', category: 'Cerámica' },
-  { id: 3, name: 'Tote Bag Bordada', price: 2200, emoji: '👜', image: '/productos/tote-bag-bordada.jpg', category: 'Textiles' },
-  { id: 4, name: 'Porta Velas de Cerámica', price: 1500, emoji: '🕯️', image: '/productos/porta-velas.jpg', category: 'Cerámica' },
+  { id: 1, name: 'Cuadro Óleo Saxofonista', price: 2500, emoji: '🎨', image: '/productos/cuadro-oleos-saxofonista.png', category: 'Cuadros' },
+  { id: 2, name: 'Cuadro Retablo Personalizable', price: 2000, emoji: '🖼️', image: '/productos/cuadro-retablo-personalizable1.png', category: 'Retablos' },
+  { id: 5, name: 'Cuadro del Carro', price: 1900, emoji: '🎨', image: '/productos/cuadro-carro.jpeg', category: 'Cuadros' },
+  { id: 3, name: 'Florero Estilo Rústico', price: 2200, emoji: '🌿', image: '/productos/florero-estilo-rustico.png', category: 'Decoración' },
+  { id: 4, name: 'Cuadro de Jesús', price: 1500, emoji: '✝️', image: '/productos/cuadro-jesus.jpeg', category: 'Cuadros' },
 ]
 
 export default function Home() {
@@ -61,16 +62,15 @@ export default function Home() {
           <p className="text-zinc-500 text-center text-sm mb-10">
             Cada pieza es única e irrepetible
           </p>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-3gap-2 lg:grid-cols-3 gap-6">
             {[
-              { label: 'Cuadros', emoji: '🎨', desc: 'Acuarelas, óleos y más' },
-              { label: 'Cerámica', emoji: '🏺', desc: 'Macetas, tazas, jarras' },
-              { label: 'Textiles', emoji: '🧵', desc: 'Bolsos, cojines bordados' },
-              { label: 'Decoración', emoji: '✨', desc: 'Marcos, velas, objetos' },
+              { label: 'Cuadros', emoji: '🎨', desc: 'Acuarelas, óleos y más', href: '/productos?categoria=Cuadros' },
+              { label: 'Retablos', emoji: '🏺', desc: 'Macetas, tazas, jarras', href: '/productos?categoria=Retablos' },
+              { label: 'Decoración', emoji: '✨', desc: 'Marcos, velas, objetos', href: '/productos?categoria=Decoración' },
             ].map(cat => (
               <Link
                 key={cat.label}
-                href="/productos"
+                href={cat.href}
                 className="bg-white rounded-2xl p-6 text-center hover:shadow-lg hover:-translate-y-1 transition-all duration-200 border border-zinc-200 group"
               >
                 <span className="text-4xl block mb-3">{cat.emoji}</span>
