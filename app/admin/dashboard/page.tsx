@@ -22,6 +22,7 @@ interface Product {
   description: string
   image: string
   emoji: string
+  gallery?: string[]
 }
 
 const CATEGORIES = ['Cuadros', 'Retablos', 'Decoración', 'Navidad']
@@ -64,6 +65,7 @@ const emptyForm: Omit<Product, 'id'> = {
   description: '',
   image: '',
   emoji: '🎨',
+  gallery: [],
 }
 
 const SEED_PRODUCTS: Omit<Product, 'id'>[] = [
@@ -93,6 +95,7 @@ export default function Dashboard() {
   const router = useRouter()
   const [authChecked, setAuthChecked] = useState(false)
   const [products, setProducts] = useState<Product[]>([])
+  const [loadingData, setLoadingData] = useState(true)
   const [form, setForm] = useState<Omit<Product, 'id'>>(emptyForm)
   const [editingId, setEditingId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
@@ -112,30 +115,46 @@ export default function Dashboard() {
   }, [router])
 
   const loadProducts = async () => {
-    const snap = await getDocs(collection(db, 'products'))
-    const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Product))
-    setProducts(data)
+    setLoadingData(true)
+    try {
+      const timeout = new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Sin respuesta de Firestore. Revisá las reglas de seguridad en Firebase Console.')), 8000)
+      )
+      const snap = await Promise.race([getDocs(collection(db, 'products')), timeout])
+      const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Product))
+      setProducts(data)
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      setMsg(`Error al cargar: ${errMsg}`)
+    } finally {
+      setLoadingData(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
+    setMsg('')
+    const timeout = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Tiempo de espera agotado. Revisá las reglas de Firestore o la conexión.')), 8000)
+    )
     try {
       if (editingId) {
-        await updateDoc(doc(db, 'products', editingId), { ...form })
+        await Promise.race([updateDoc(doc(db, 'products', editingId), { ...form }), timeout])
         setMsg('Producto actualizado.')
       } else {
-        await addDoc(collection(db, 'products'), { ...form })
+        await Promise.race([addDoc(collection(db, 'products'), { ...form }), timeout])
         setMsg('Producto creado.')
       }
       setForm(emptyForm)
       setEditingId(null)
       await loadProducts()
-    } catch {
-      setMsg('Error al guardar el producto.')
+    } catch (err: unknown) {
+      const errMsg = err instanceof Error ? err.message : String(err)
+      setMsg(`Error: ${errMsg}`)
     } finally {
       setLoading(false)
-      setTimeout(() => setMsg(''), 3000)
+      setTimeout(() => setMsg(''), 6000)
     }
   }
 
@@ -168,6 +187,7 @@ export default function Dashboard() {
       description: p.description,
       image: p.image,
       emoji: p.emoji,
+      gallery: p.gallery ?? [],
     })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
@@ -209,7 +229,7 @@ export default function Dashboard() {
       <div className="max-w-5xl mx-auto px-4 py-10 space-y-12">
 
         {/* Importar productos */}
-        {products.length === 0 && (
+        {!loadingData && products.length === 0 && (
           <section className="bg-zinc-900 border border-zinc-700 rounded-2xl p-6 text-center">
             <p className="text-zinc-300 font-semibold mb-2">Firestore está vacío</p>
             <p className="text-zinc-500 text-sm mb-5">
@@ -287,6 +307,37 @@ export default function Dashboard() {
               )}
             </div>
             <div className="sm:col-span-2">
+              <label className="block text-xs text-zinc-400 mb-1">Galería (imágenes adicionales)</label>
+              <div className="space-y-2">
+                {(form.gallery ?? []).map((img, i) => (
+                  <div key={i} className="flex gap-2 items-center">
+                    <select
+                      value={img.replace('/productos/', '')}
+                      onChange={e => {
+                        const updated = [...(form.gallery ?? [])]
+                        updated[i] = `/productos/${e.target.value}`
+                        setForm(f => ({ ...f, gallery: updated }))
+                      }}
+                      className="flex-1 bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-zinc-500"
+                    >
+                      <option value="">— Seleccioná —</option>
+                      {AVAILABLE_IMAGES.map(im => <option key={im} value={im}>{im}</option>)}
+                    </select>
+                    <button
+                      type="button"
+                      onClick={() => setForm(f => ({ ...f, gallery: (f.gallery ?? []).filter((_, j) => j !== i) }))}
+                      className="text-red-400 hover:text-red-300 text-xs px-2"
+                    >✕</button>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => setForm(f => ({ ...f, gallery: [...(f.gallery ?? []), ''] }))}
+                  className="text-zinc-400 hover:text-white text-xs border border-zinc-700 rounded-lg px-3 py-1.5 transition-colors"
+                >+ Agregar imagen a galería</button>
+              </div>
+            </div>
+            <div className="sm:col-span-2">
               <label className="block text-xs text-zinc-400 mb-1">Descripción</label>
               <textarea
                 rows={3}
@@ -321,7 +372,9 @@ export default function Dashboard() {
         {/* Lista de productos */}
         <section>
           <h2 className="text-lg font-semibold mb-4">Productos ({products.length})</h2>
-          {products.length === 0 ? (
+          {loadingData ? (
+            <p className="text-zinc-500 text-sm">Cargando productos...</p>
+          ) : products.length === 0 ? (
             <p className="text-zinc-500 text-sm">No hay productos aún. Creá el primero arriba.</p>
           ) : (
             <div className="space-y-3">

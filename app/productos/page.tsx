@@ -23,33 +23,24 @@ function ProductCard({
   added,
   onAdd,
   showNavidadBadge,
+  onOpen,
 }: {
   product: Product
   added: boolean
   onAdd: () => void
   showNavidadBadge: boolean
+  onOpen: () => void
 }) {
-  const images = product.gallery && product.gallery.length > 1 ? product.gallery : null
-  const [current, setCurrent] = useState(0)
-
-  const prev = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setCurrent(i => (i - 1 + images!.length) % images!.length)
-  }
-  const next = (e: React.MouseEvent) => {
-    e.stopPropagation()
-    setCurrent(i => (i + 1) % images!.length)
-  }
-
-  const displaySrc = images ? images[current] : product.image
-
   return (
-    <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-zinc-100 group flex flex-col">
+    <div
+      className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all duration-300 border border-zinc-100 group flex flex-col cursor-pointer"
+      onClick={onOpen}
+    >
       <div className="relative h-72 bg-zinc-100 overflow-hidden">
         <div className="absolute inset-0 group-hover:scale-105 transition-transform duration-500">
-          {displaySrc ? (
+          {product.image ? (
             <Image
-              src={displaySrc}
+              src={product.image}
               alt={product.name}
               fill
               className="object-cover"
@@ -61,70 +52,29 @@ function ProductCard({
             </div>
           )}
         </div>
-
-        {images && (
-          <>
-            <button
-              onClick={prev}
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 backdrop-blur-sm z-10"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3.5 h-3.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button
-              onClick={next}
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 backdrop-blur-sm z-10"
-            >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-3.5 h-3.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-            <div className="absolute bottom-2 inset-x-0 flex justify-center gap-1.5 z-10">
-              {images.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={e => { e.stopPropagation(); setCurrent(i) }}
-                  className={`rounded-full transition-all duration-300 ${i === current ? 'bg-white w-4 h-1.5' : 'bg-white/50 hover:bg-white/80 w-1.5 h-1.5'}`}
-                />
-              ))}
-            </div>
-            <div className="absolute inset-x-0 bottom-0 bg-linear-to-t from-black/60 to-transparent pt-8 pb-2 px-2 flex gap-1.5 justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-              {images.map((img, i) => (
-                <button
-                  key={i}
-                  onClick={e => { e.stopPropagation(); setCurrent(i) }}
-                  className={`relative w-10 h-10 shrink-0 rounded-lg overflow-hidden ring-2 transition-all duration-200 ${i === current ? 'ring-white scale-110' : 'ring-white/30 hover:ring-white/70 opacity-70 hover:opacity-100'}`}
-                >
-                  <Image src={img} alt={`Vista ${i + 1}`} fill className="object-cover" sizes="40px" />
-                </button>
-              ))}
-            </div>
-          </>
-        )}
-
         {showNavidadBadge && (
           <div className="absolute top-2 left-2 bg-red-800 text-white text-xs px-2 py-0.5 rounded-full z-10">
             🎄 Navidad
           </div>
         )}
+        {product.gallery && product.gallery.length > 1 && (
+          <div className="absolute bottom-2 right-2 bg-black/50 text-white text-xs px-2 py-0.5 rounded-full z-10 backdrop-blur-sm">
+            {product.gallery.length} fotos
+          </div>
+        )}
       </div>
-
       <div className="p-5 flex flex-col flex-1">
         <span className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">{product.category}</span>
-        <h3 className="font-bold text-zinc-900 mt-1 mb-2">{product.name}</h3>
-        <p className="text-zinc-500 text-xs leading-relaxed flex-1">{product.description}</p>
-        <div className="flex items-center justify-between mt-4 pt-4 border-t border-zinc-100">
+        <h3 className="font-bold text-zinc-900 mt-1 mb-1">{product.name}</h3>
+        <div className="flex items-center justify-between mt-auto pt-4 border-t border-zinc-100">
           <span className="text-lg font-bold text-zinc-900">
             {product.price > 0 ? `$${product.price.toLocaleString('es-CO')}` : 'Consultar'}
           </span>
           <button
-            onClick={onAdd}
+            onClick={e => { e.stopPropagation(); onAdd() }}
             className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200 ${added ? 'bg-green-500 text-white scale-95' : 'bg-zinc-900 hover:bg-zinc-700 text-white'}`}
           >
-            {added ? (
-              <>✓ Agregado</>
-            ) : (
+            {added ? <>✓ Agregado</> : (
               <>
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
                   <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
@@ -133,6 +83,121 @@ function ProductCard({
               </>
             )}
           </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function ProductModal({
+  product,
+  added,
+  onAdd,
+  onClose,
+}: {
+  product: Product
+  added: boolean
+  onAdd: () => void
+  onClose: () => void
+}) {
+  const images = product.gallery && product.gallery.length > 1 ? product.gallery : product.image ? [product.image] : []
+  const [current, setCurrent] = useState(0)
+
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+      if (e.key === 'ArrowRight') setCurrent(i => (i + 1) % images.length)
+      if (e.key === 'ArrowLeft') setCurrent(i => (i - 1 + images.length) % images.length)
+    }
+    document.addEventListener('keydown', handleKey)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handleKey)
+      document.body.style.overflow = ''
+    }
+  }, [images.length, onClose])
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-3xl overflow-hidden max-w-4xl w-full max-h-[90vh] flex flex-col md:flex-row shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        {/* Imagen */}
+        <div className="relative md:w-1/2 bg-zinc-950 flex-shrink-0">
+          <div className="relative h-80 md:h-full min-h-[420px]">
+            {images[current] ? (
+              <Image
+                src={images[current]}
+                alt={product.name}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 50vw"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-8xl">{product.emoji}</div>
+            )}
+          </div>
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={() => setCurrent(i => (i - 1 + images.length) % images.length)}
+                className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /></svg>
+              </button>
+              <button
+                onClick={() => setCurrent(i => (i + 1) % images.length)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center backdrop-blur-sm"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" /></svg>
+              </button>
+              <div className="absolute bottom-3 inset-x-0 flex justify-center gap-2">
+                {images.map((img, i) => (
+                  <button
+                    key={i}
+                    onClick={() => setCurrent(i)}
+                    className={`relative w-12 h-12 rounded-lg overflow-hidden ring-2 transition-all ${i === current ? 'ring-white scale-110' : 'ring-white/30 opacity-60 hover:opacity-100'}`}
+                  >
+                    <Image src={img} alt="" fill className="object-cover" sizes="48px" />
+                  </button>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* Info */}
+        <div className="flex flex-col p-7 md:w-1/2 overflow-y-auto">
+          <button onClick={onClose} className="self-end text-zinc-400 hover:text-zinc-900 transition-colors mb-4">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+          <span className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">{product.category}</span>
+          <h2 className="text-2xl font-bold text-zinc-900 mt-1 mb-4" style={{ fontFamily: 'Georgia, serif' }}>{product.name}</h2>
+          {product.description && product.description !== 'Descripción pendiente.' && (
+            <p className="text-zinc-600 text-sm leading-relaxed mb-6">{product.description}</p>
+          )}
+          <div className="mt-auto pt-4 border-t border-zinc-100 flex items-center justify-between gap-4">
+            <span className="text-2xl font-bold text-zinc-900">
+              {product.price > 0 ? `$${product.price.toLocaleString('es-CO')}` : 'Consultar precio'}
+            </span>
+            <button
+              onClick={onAdd}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold transition-all duration-200 ${added ? 'bg-green-500 text-white scale-95' : 'bg-zinc-900 hover:bg-zinc-700 text-white'}`}
+            >
+              {added ? <>✓ Agregado</> : (
+                <>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+                    <path d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" />
+                  </svg>
+                  Agregar al pedido
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -172,33 +237,55 @@ export default function Productos() {
     catFromUrl && categories.includes(catFromUrl) ? catFromUrl : 'Todos'
   )
   const [added, setAdded] = useState<string | null>(null)
-  const [products, setProducts] = useState<Product[]>([])
-  const [loadingProducts, setLoadingProducts] = useState(true)
+  const [products, setProducts] = useState<Product[]>(FALLBACK_PRODUCTS)
+  const [loadingProducts, setLoadingProducts] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null)
+  const productoFromUrl = searchParams.get('producto')
+
+  useEffect(() => {
+    if (productoFromUrl && products.length > 0) {
+      const found = products.find(p => p.image === productoFromUrl)
+      if (found) setSelectedProduct(found)
+    }
+  }, [productoFromUrl, products])
 
   useEffect(() => {
     getDocs(collection(db, 'products'))
       .then(snap => {
         if (!snap.empty) {
-          const data = snap.docs.map(d => ({ id: d.id, ...d.data() } as Product))
+          const data = snap.docs.map(d => {
+            const p = { id: d.id, ...d.data() } as Product
+            // Si el producto de Firestore no tiene galería, usar la del fallback si coincide por imagen
+            if (!p.gallery || p.gallery.length === 0) {
+              const fallback = FALLBACK_PRODUCTS.find(f => f.image === p.image)
+              if (fallback?.gallery) p.gallery = fallback.gallery
+            }
+            return p
+          })
           setProducts(data)
-        } else {
-          setProducts(FALLBACK_PRODUCTS)
         }
       })
-      .catch(() => setProducts(FALLBACK_PRODUCTS))
-      .finally(() => setLoadingProducts(false))
+      .catch(() => {})
   }, [])
 
   const filtered = activeCategory === 'Todos' ? products : products.filter(p => p.category === activeCategory)
 
   const handleAdd = (product: Product) => {
-    addItem({ id: product.id, name: product.name, price: product.price })
+    addItem({ id: product.id, name: product.name, price: product.price, image: product.image })
     setAdded(product.id)
     setTimeout(() => setAdded(null), 1500)
   }
 
   return (
     <div className="bg-zinc-50 min-h-screen">
+      {selectedProduct && (
+        <ProductModal
+          product={selectedProduct}
+          added={added === selectedProduct.id}
+          onAdd={() => handleAdd(selectedProduct)}
+          onClose={() => setSelectedProduct(null)}
+        />
+      )}
       <section className="bg-linear-to-r from-zinc-950 to-zinc-900 text-white py-16 text-center">
         <span className="text-zinc-400 text-sm tracking-[0.3em] uppercase">❖ Tienda ❖</span>
         <h1 className="text-4xl font-bold mt-3" style={{ fontFamily: 'Georgia, serif' }}>Nuestros Productos</h1>
@@ -230,23 +317,18 @@ export default function Productos() {
           </div>
         )}
 
-        {loadingProducts ? (
-          <div className="flex justify-center py-20">
-            <p className="text-zinc-400 text-sm">Cargando productos...</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filtered.map(product => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                added={added === product.id}
-                onAdd={() => handleAdd(product)}
-                showNavidadBadge={product.category === 'Navidad' && activeCategory !== 'Navidad'}
-              />
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {filtered.map(product => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              added={added === product.id}
+              onAdd={() => handleAdd(product)}
+              showNavidadBadge={product.category === 'Navidad' && activeCategory !== 'Navidad'}
+              onOpen={() => setSelectedProduct(product)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   )

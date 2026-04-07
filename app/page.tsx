@@ -1,13 +1,6 @@
 import Image from 'next/image'
 import Link from "next/link";
-
-const featured = [
-  { id: 1, name: 'Cuadro Óleo Saxofonista', price: 2500, emoji: '🎨', image: '/productos/cuadro-oleos-saxofonista.png', category: 'Cuadros' },
-  { id: 2, name: 'Cuadro Retablo Personalizable', price: 2000, emoji: '🖼️', image: '/productos/cuadro-retablo-personalizable1.png', category: 'Retablos' },
-  { id: 5, name: 'Cuadro del Carro', price: 1900, emoji: '🎨', image: '/productos/cuadro-carro.jpeg', category: 'Cuadros' },
-  { id: 3, name: 'Florero Estilo Rústico', price: 2200, emoji: '🌿', image: '/productos/florero-estilo-rustico.png', category: 'Decoración' },
-  { id: 4, name: 'Cuadro de Jesús', price: 1500, emoji: '✝️', image: '/productos/cuadro-jesus.jpeg', category: 'Cuadros' },
-]
+import FeaturedProducts from "./components/FeaturedProducts";
 
 export default function Home() {
   return (
@@ -104,40 +97,7 @@ export default function Home() {
               Ver todo →
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {featured.map(product => (
-              <Link
-                key={product.id}
-                href="/productos"
-                className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow border border-zinc-100 group"
-              >
-                <div className="relative h-44 bg-zinc-100 overflow-hidden">
-                  {product.image ? (
-                    <Image
-                      src={product.image}
-                      alt={product.name}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-6xl">
-                      {product.emoji}
-                    </div>
-                  )}
-                </div>
-                <div className="p-4">
-                  <span className="text-xs text-zinc-500 font-semibold uppercase tracking-wide">
-                    {product.category}
-                  </span>
-                  <h3 className="font-semibold text-zinc-900 text-sm mt-1">{product.name}</h3>
-                  <p className="text-zinc-900 font-bold mt-2">
-                    ${product.price.toLocaleString('es-AR')}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
+          <FeaturedProducts />
           <div className="text-center mt-8 sm:hidden">
             <Link href="/productos" className="text-zinc-500 hover:text-zinc-900 text-sm font-medium">
               Ver todo →
